@@ -1,0 +1,45 @@
+.bingo-game {
+    text-align: center;
+}
+
+.bingo-card {
+    display: flex;
+    justify-content: center;
+}
+
+.bingo-column {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #000;
+    padding: 10px;
+}
+
+.bingo-cell {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #000;
+    margin: 2px;
+    cursor: pointer;
+}
+
+.bingo-cell.marked {
+    background-color: #4caf50;
+    color: #fff;
+}
+
+.container {
+    display: flex;
+    /* Use flexbox for layout */
+    justify-content: center;
+    width: 100%;
+
+    gap: 20px;
+}
+
+.box {
+    /* width: 100px; */
+    
+}

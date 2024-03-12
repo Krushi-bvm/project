@@ -8,7 +8,7 @@
 const array1 = [1, 0, 2, 3, 4]
 const array2 = [3, 5, 6, 7, 8, 13]
 
-var sum = array1.map( (nam, index) =>{
+var sum = array1.map((nam, index) => {
     return nam + array2[index]
 })
 console.log(sum)
@@ -35,7 +35,7 @@ console.log(sum)
 let chekduplicate = (arr) => {
     let arr1 = arr.filter((item, index) => arr.indexOf(item) === index)
     return arr1
-    
+
 
 }
 let arr = [1, 1, 2, 2, 3, 3, 4, 5, 6, 1];
@@ -138,10 +138,10 @@ console.log(mergedArr, 'mergedArr')
 //---question 34 --//
 let numarr = [43, 56, 23, 89, 88, 90, 99, 652]
 let findLargest = (num = [], target = 0) => {
-    return num.sort((a, b) => a - b).reverse()[target-1]
+    return num.sort((a, b) => a - b).reverse()[target - 1]
 
 }
-console.log(findLargest(numarr, 4),'findLargest')
+console.log(findLargest(numarr, 4), 'findLargest')
 
 //--questoin 35--//
 let rendomeItem = (items) => {
@@ -231,7 +231,7 @@ console.log(convertArrayToObject(arrObj, x => x), 'question 43')
 let a = [1, 2, 2, 3, 4, 4, 5];
 let b = [1, 2, 3, 4, 5]
 let c = [1, -2, -2, 3, 4, -5, 6, -5]
-console.log([... new Set(a)],"question 45-")
+console.log([... new Set(a)], "question 45-")
 console.log([... new Set(b)]);
 console.log([... new Set(c)]);
 
@@ -293,7 +293,7 @@ const cleanObject = (input) => {
     return input;
 }
 
-console.log(cleanObject(object), "cleanObject",'question 47');
+console.log(cleanObject(object), "cleanObject", 'question 47');
 
 //--question 48--//
 function isPrime(arrNum) {
@@ -412,7 +412,7 @@ const protect_email = (email) => {
     return split1 + "...@" + split2
 
 }
-console.log(protect_email("robin_singh@example.com"),'protect_email')
+console.log(protect_email("robin_singh@example.com"), 'protect_email')
 
 //--question 7--//
 const parameterize = (str) => {
@@ -507,9 +507,6 @@ console.log(x.find(el => el === 9), 'find')
 
 const humanize_formate = (num) => {
     var array = ("" + num).split('').reverse()
-
-
-
     if (array[1] != "1") {
         switch (array[0]) {
             case "1": return num + "st";
@@ -517,7 +514,6 @@ const humanize_formate = (num) => {
             case "3": return num + "rd";
         }
     }
-
     return num + "th"
 }
 
@@ -530,17 +526,13 @@ console.log(exampleArray.forEach(x => x * x * x), 'forEach');
 //Output: (undefined)
 
 console.log(exampleArray.map(x => x * x * x), 'map');
-
-
 const numbers = [1, 2, 3, 4];
-
 numbers.forEach((number) => {
     console.log(number * 2);
 });
 let obj1 = { name: "krushi" }
 let obj2 = { name: "krushi" }
 console.log(obj1 === obj2)
-
 
 let y = 10
 console.log(y++)
@@ -778,7 +770,7 @@ const isLowerCase = (str, index) => {
     return str[index] == str[index].toLowerCase()
 
 }
-console.log(isLowerCase('Js STRING EXERCISES', 1))
+console.log(isLowerCase('Js STRING EXERCISES', 1),'lower')
 //question 45//
 const humanize = (num) => {
     //  var d = num%10;
@@ -887,11 +879,6 @@ const successor = (str) => {
         }
     }
     return result;
-
-
-
-
-
 }
 console.log(successor('abcd'));
 console.log(successor('3456'));
@@ -1128,16 +1115,9 @@ function longest_Common_Subsequence(text1, text2) {
     console.log(result, 'result')
     return test(text1.length - 1, text2.length - 1)
 }
-
-
-
-
-
 console.log(longest_Common_Subsequence("abcda", "abcdef"), 'Subsequence')
 
 //question 62//
-
-
 const longestValidParentheses = (text) => {
     if (typeof text !== 'string') {
         return 'It must be string'
@@ -1223,3 +1203,6 @@ console.log(longest_palindrome('aaaba'))
 //question 65//
 let firstDay = (new Date(year, month)).getDay();
 console.log(firstDay)
+const div = document.getElementById('#id')
+console.log(div, 'div//////')
+

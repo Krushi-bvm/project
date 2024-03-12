@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { API } from "./API";
+import DecryptData from "./DecryptData";
 
 function ViewUser() {
   const [user, setUser] = useState([]);
@@ -8,23 +9,35 @@ function ViewUser() {
   const { id } = useParams();
 
   const fetchData = async () => {
-    await API.get(`/users/${id}`).then((res) => {
-      setUser(res.data);
-    });
+    API.get(`user/${id}`).then((res) => {
+      const userData = DecryptData(res.data);
+      setUser(JSON.parse(userData));
+
+  
+    })
+   
   };
   useEffect(() => {
     fetchData();
   }, []);
+  console.log(user)
 
   return (
     <div className="row">
       <div className="card col-lg-6 m-lg-auto mt-5">
-        {/* {Object.keys(user).map((value) => {
-          <div className="text-dark">{value.username}</div>;
-        })} */}
+      
         <h4 className="card-header"> View User</h4>
+        {user.map((data) => {
+          return(
+            <>
+            <div>email :-{data.email}</div>
+            <div>port :-{data.port}</div>
+            <div>link :-{data.link}</div>
+            </>
+          )
+        })}
 
-        <div className="card-body">
+        {/* <div className="card-body">
           <h4 className="card-header">
             {" "}
             UserName: <span className="">{user.username}</span>{" "}
@@ -83,12 +96,13 @@ function ViewUser() {
 
             <button
               className="btn btn-primary"
-              onClick={() => navigate("/usertable")}
+              // onClick={() => navigate("/usertable")}
+              
             >
               Go Back
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

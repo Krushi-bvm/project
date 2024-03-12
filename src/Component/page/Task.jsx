@@ -15,32 +15,60 @@ function Task() {
   var color = ["Blue ", "Green", "Red", "Orange", "Violet", "Indigo", "Yellow "];
 
 
-  const Ordinal = (n) => {
-    var o = ["th", "st", "nd", "rd"],
-      x = n % 100;
+  const Ordinal = (num) => {
+    var o = ["th", "st", "nd", "rd"]
+ if(num >=1 && num <=3){
+  return o[num]
 
-    return x + (o[(x - 20) % 10] || o[x] || o[0]);
+ }
+ else{
+  return   o[0]
+
+ }
+
+      // x = num % 100;
+
+
+      // switch(num% 10){
+      //   case 1: return  'st';
+      //   case 2: return  'nd';
+      //   case 3: return  'rd';
+
+
+
+      // }
+     
+
+    // return x + (o[(x - 20) % 10] || o[x] || o[0]);
   }
 
   for (let n = 0; n < color.length; n++) {
     var ordinal = n + 1;
 
-    var output = (Ordinal(ordinal) + " choice is " + color[n] + ".");
+    var output = (ordinal +Ordinal(ordinal) + " choice is " + color[n] + ".");
     console.log(output)
   }
   function leapYearRange(st_year, end_year) {
     var yearRange = [];
+    let count = 0;
     for (var i = st_year; i <= end_year; i++) {
-      yearRange.push(i);
+      if(i % 4 === 0){
+        yearRange.push(i);
+      }
+     
+    
+    
     }
-    var new_array = [];
+    console.log(yearRange);
+    
+    // var new_array = [];
 
-    yearRange.map((year) => {
-      if (leapYear(year))
-        new_array.push(year);
-    });
+    // yearRange.map((year) => {
+    //   if (leapYear(year))
+    //     new_array.push(year);
+    // });
 
-    return new_array;
+    // return new_array;
   }
 
   const leapYear = (year) => {

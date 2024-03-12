@@ -3,33 +3,24 @@ import * as Yup from "yup";
 import React, { useEffect, useState } from "react";
 import { API } from "./API";
 import { useNavigate, useParams } from "react-router-dom";
+import DecryptData from "./DecryptData";
+import EncryptData from "./EncryptData";
 
-// Creating schema
 const schema = Yup.object().shape({
-  // username: Yup.string().required(" UserName is a required field"),
-  // email: Yup.string()
-  //   .required("Email is a required field")
-  //   .email("Invalid email format"),
-  // phone: Yup.string()
-  //   .required("Phone is a required field")
-  //   .min(10, "Password must be at least 10 characters"),
+  // Define your validation schema here
 });
 
 function EditUser() {
   const [user, setUser] = useState([]);
-  const [data , setData] = useState([])
-
+  const [data, setData] = useState([]);
   const [username, setUsername] = useState("");
-  const [email, setemail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [idChange, setIdChange] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const { id } = useParams();
- 
-
+  const role = localStorage.getItem("role");
 
   const submitForm = (values) => {
-    // console.log(values);
     if (id) {
       updatePerson(values);
     } else {
@@ -39,136 +30,103 @@ function EditUser() {
 
   const updatePerson = async (values) => {
     try {
-      await API.put(`/users/${id}`, values).then((res) => {
-        if (res.data) {
-          alert("userupdate sucessfully");
-          navigate("/usertable");
-        }
-      });
+      const encrypted = EncryptData(values);
+      const response = await API.put('user', { encrypted });
+      if (response.data) {
+        const userData = DecryptData(response.data);
+        navigate('/usertable');
+      }
     } catch (error) {
-      alert("Feild to create user");
-      console.log(error);
+      console.error("Error while updating user:", error);
     }
   };
 
   const createPerson = async (values) => {
-  
     try {
-      await API.post("/users", values).then((res) => {
-        if(res.data?.length > 0){
-
-          setData(res.data)
-     alert("User create successfully");
-
+      const encrypted = EncryptData(values);
+      await API.post("auth/sign-up", { encrypted }).then((res) => {
+        if (res.data?.length > 0) {
+          const userData = DecryptData(res.data);
+          navigate('/usertable');
         }
-        // navigate('/usertable');
-    // navigate('/usertable', { state: {data:data } });
-
-
       });
     } catch (error) {
-      alert("Feild to create user");
+      alert("Failed to create user");
       console.log(error);
     }
-  }
+  };
+
   const onSubmit = (values) => {
     submitForm(values);
   };
-  useEffect(() => {
-   
-    if(id){
- API.get(`/users/${id}`).then((res) => {
-      setUser(res.data);
-      setUsername(res.data.username);
-      setemail(res.data.email);
-      setPhone(res.data.phone);
-    })
-    }
-   ;
-  }, []);
 
-  console.log(phone);
+  useEffect(() => {
+    if (id) {
+      API.get(`user/${id}`).then((res) => {
+        const userData = DecryptData(res.data);
+        setData(JSON.parse(userData));
+        setEmail(data[0]?.email);
+      });
+    }
+  }, [id, data]);
 
   return (
-    <>
-      {/* Wrapping form inside formik tag and passing our schema to validationSchema prop */}
-      <Formik
-        enableReinitialize={true}
-        validationSchema={schema}
-        initialValues={{
-          id: "",
-          username: username,
-          email: email,
-          phone: phone,
-        }}
-        onSubmit={(values) => {
-          onSubmit(values);
-          // Alert the input values of the form that we filled
-        }}
-      >
-        {({
-          values,
-          errors,
-          touched,
-          handleChange,
-          handleBlur,
-          handleSubmit,
-        }) => (
-          <div className="login">
-            <div className="form">
-              {/* Passing handleSubmit parameter tohtml form onSubmit property */}
-              <form noValidate onSubmit={handleSubmit}>
-                <span> Create User</span>
-                {/* Our input html with passing formik parameters like handleChange, values, handleBlur to input properties */}
-                <input
-                  type="username"
-                  name="username"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  // value={values.username}
-                  value={values.username}
-                  defaultValue={username}
-                  className="form-control inp_text"
-                  id="username"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={values.email}
-                  defaultValue={email}
-                  // placeholder="Enter email id / username"
-                  className="form-control inp_text"
-                  id="email"
-                />
-                {/* If validation is not passed show errors */}
-
-                <p className="error">
-                  {errors.username && touched.username && errors.username}
-                </p>
-                {/* Our input html with passing formik parameters like handleChange, values, handleBlur to input properties */}
-                <input
-                  type="phone"
-                  name="phone"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={values.phone}
-                  defaultValue={phone}
-                  className="form-control"
-                />
-                {/* If validation is not passed show errors */}
-                <p className="error">
-                  {errors.phone && touched.phone && errors.phone}
-                </p>
-                {/* Click on submit button to submit the form */}
-                <button type="submit">Update User</button>
-              </form>
-            </div>
+    <Formik
+      enableReinitialize={true}
+      initialValues={{
+        _id: id,
+        email: email,
+        password: password,
+      }}
+      onSubmit={(values) => {
+        onSubmit(values);
+      }}
+    >
+      {({
+        values,
+        handleChange,
+        handleBlur,
+        handleSubmit,
+      }) => (
+        <div className="login">
+          <div className="form">
+            <form noValidate onSubmit={handleSubmit}>
+              {id ? <span> Edit User</span> : <span> Create User</span>}
+              <label htmlFor="">Email Address</label>
+              <input
+                type="email"
+                name="email"
+                onChange={handleChange}
+                placeholder="Email Address"
+                onBlur={handleBlur}
+                value={values.email}
+                defaultValue={email}
+                disabled={role === 'admin'}
+                className="form-control inp_text"
+                id="email"
+              />
+              {!id ? (
+                <>
+                  <label htmlFor="">Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    onChange={handleChange}
+                    placeholder="password"
+                    onBlur={handleBlur}
+                    value={values.password}
+                    disabled={role === 'admin'}
+                    defaultValue=""
+                    className="form-control"
+                  />
+                </>
+              ) : null}
+              <button type="submit">{id ? "Update User" : "Create User"}</button>
+            </form>
           </div>
-        )}
-      </Formik>
-    </>
+        </div>
+      )}
+    </Formik>
   );
 }
 

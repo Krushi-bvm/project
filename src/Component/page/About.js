@@ -29,10 +29,16 @@ export default function About() {
   const { loading, employeeList, error, updateState, response } = useSelector(
     (state) => state.employeeKey
   );
+
+  const [one,,three]=[1,2,3,4]
+  console.log(one,'arr')
+
+  
   console.log(employeeList)
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [position, setPosition] = useState("");
+  
 
   useEffect(() => {
     dispatch(fetchEmployee());
@@ -80,6 +86,9 @@ export default function About() {
   const handleClose = () => {
     setOpen(false);
   };
+console.log([3]*[2])
+
+
 
   return (
     <Box

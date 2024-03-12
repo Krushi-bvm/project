@@ -1,48 +1,61 @@
 import React, { useEffect, useState } from "react";
 import { API } from "../API";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
+import DecryptData from "../DecryptData";
+import EditUser from "../EditUser";
 
 function UserTable() {
   const [user, setUser] = useState([]);
-  const { state } = useLocation();
-  // const { data } = state;
-  // console.log(state , 'datas')
+  const role = localStorage.getItem("role");
+
+  const [updateTrigger, setUpdateTrigger] = useState(false);
 
   const users = useSelector(store => store.users);
+
+
   console.log(users)
-  const navigate = useNavigate();
-  const fetchData = async () => {
 
-
-    await API.get("/users").then((res) => {
-      // console.log([...user,res.data]);
-
-      setUser(res.data);
-
-
+  const fetchUpdatedData = async () => {
+    await API.get("user").then((res) => {
+      const data = DecryptData(res.data);
+      setUser(JSON.parse(data));
     });
-
   };
 
 
+
+  useEffect(() => {
+    fetchUpdatedData();
+  }, []);
+
+  // Callback function to handle user data update
+
+
+  const navigate = useNavigate();
 
 
   const handleOpenEdit = (id) => {
 
-    navigate(`/user/edit/${id}`);
+
+    navigate(`/user/${id}`);
+
   };
   console.log(user, ' users')
 
-  const handleDeleteuser = async (id, email, username, phone) => {
+  const handleDeleteuser = async (id) => {
     try {
-      await API.delete(`/users/${id}`).then((res) => {
+     
+      await API.delete(`user/${id}`).then((res) => {
         if (res.data) {
-          localStorage.removeItem("id");
-          localStorage.removeItem("username");
-          localStorage.removeItem("email");
-          localStorage.removeItem("phone");
-          fetchData();
+          const userData = DecryptData(res.data);
+          console.log(userData);
+
+          // localStorage.removeItem("id");
+          // localStorage.removeItem("username");
+          // localStorage.removeItem("email");
+          // localStorage.removeItem("phone");
+          fetchUpdatedData();
         }
       });
     } catch (error) {
@@ -51,89 +64,108 @@ function UserTable() {
     }
   };
   const handleOpenView = (id) => {
-    navigate(`/user/view/${id}`);
+    navigate(`/view/${id}`);
   };
 
-  useEffect(() => {
-    fetchData();
-    //  const response  = data
 
-    // const result = response.push(data)
-    // console.log(result)
-  }, []);
 
   return (
-    <div className="container m-auto mx-auto">
-      <div className="fs-3"> User List</div>
-      <button
-        className="btn btn-primary p-2 mb-2"
-        onClick={() => navigate("/createuser")}
-      >
-        {" "}
-        Add User
-      </button>
-      <table class="table table-striped border p-2">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">User Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Phone</th>
-            <th scope="col">Edit Usre</th>
-            <th scope="col">Delete</th>
-            <th scope="col">View</th>
-          </tr>
-        </thead>
-        <tbody>
-          {user.map((user) => {
-            return (
-              <tr key={user.id}>
-                <th scope="row">{user.id}</th>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
-                <td scope="col">
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() =>
-                      handleOpenEdit(
-                        user.id,
+    <div>
 
-                      )
-                    }
-                  >
-                    Edit
-                  </button>
-                </td>
-                <td>
-                  {" "}
-                  <button
-                    className="btn btn-primary"
-                    onClick={() =>
-                      handleDeleteuser(
-                        user.id,
-                        user.username,
-                        user.email,
-                        user.phone
-                      )
-                    }
-                  >
-                    Delete
-                  </button>
-                </td>
-                <td>
-                  <button
-                    className="btn btn-secondary"
-                    onClick={() => handleOpenView(user.id)}
-                  >
-                    View User
-                  </button>
-                </td>
+
+      <div className="fs-3"> User List</div>
+
+      <div className="container ">
+      {role == 'user' ?
+          <>
+            <div>
+              <button
+              className="btn btn-primary  mb-2"
+              onClick={() => navigate("/create")}
+            >
+
+              Add User
+            </button></div>
+            <table class="table table-striped border p-2">
+              <thead>
+                <tr>
+
+                  <th scope="col">Email</th>
+                 <th scope="col">Edit</th>
+                 <th scope="col">Delete</th>
+
+                  <th scope="col">View</th>
+                </tr>
+              </thead>
+              <tbody>
+                {user.map((user) => {
+                  return (
+                    <tr key={user.id}>
+
+
+                      <td>{user.email}</td>
+                      <td scope="col">
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => {
+                            console.log(user._id);
+                            handleOpenEdit(user._id)}}
+                        >
+                          Edit
+                        </button>
+                      </td>
+
+                      <td>
+                        {" "}
+                        <button
+                          className="btn btn-primary"
+                          onClick={() =>
+                            handleDeleteuser(user._id)
+                          }
+                        >
+                          Delete
+                        </button>
+                      </td>
+
+                      <td>
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => {
+
+
+                            handleOpenView(user._id)
+                          }}
+                        >
+                          View User
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table></> :
+          <table>
+            <thead>
+              <tr>
+           <th scope="col">Email</th>
+
+
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {user.map((user) => {
+                return (
+                  <tr>
+                    <td>{user.email}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        }
+
+      </div>
+      <Outlet />
     </div>
   );
 }
